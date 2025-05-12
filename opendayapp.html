@@ -1,650 +1,908 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>University of Wolverhampton Undergraduate Open Day</title>
+    <!-- Add Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .header {
-            background-color: #00274d;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        .header h1, .header h2 {
-            margin: 0;
-        }
-        .nav-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-        .nav-tabs li {
-            display: inline;
-        }
-        .nav-tabs a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            background-color: #004080;
-            border-radius: 5px;
-        }
-        .nav-tabs a:hover {
-            background-color: #003366;
-        }
-        .container {
-            text-align: center;
-            padding: 20px;
-        }
-        .image-container {
-            position: relative;
-            width: 100%;
-            height: 500px;
-            overflow: hidden;
-        }
-        .image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        .image:hover {
-            transform: scale(1.1);
-        }
-        .image-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white;
-        }
-        .image-container:hover .image-overlay {
-            opacity: 1;
-        }
-        .image-overlay h1 {
-            font-size: 32px;
-        }
-        .content {
-            background-color: white;
-            border-radius: 10px;
-            margin: 20px;
-            padding: 20px;
-            text-align: justify;
-        }
-        .contact-box {
-            background-color: #e6f7ff;
-            padding: 15px;
-            border-left: 5px solid #00274d;
-            margin-top: 20px;
-        }
-        footer {
-            background-color: #00274d;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: 20px;
-        }
-        .login-register {
-            margin: 20px auto;
-            max-width: 400px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .login-register input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .login-register button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .login-register button:hover {
-            background-color: #45a049;
-        }
-        .hidden {
-            display: none;
-        }
-        .tab {
-            overflow: hidden;
-            background-color: #333;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px;
-        }
-        .tab button {
-            background-color: inherit;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            padding: 10px;
-            transition: 0.3s;
-            font-size: 16px;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            text-align: center;
-        }
-        .tab button:hover {
-            background-color: #555;
-        }
-        .tab button.active {
-            background-color: #4CAF50;
-        }
-        .tabcontent {
-            display: none;
-            padding: 20px;
-            border-top: none;
-            background-color: #fff;
-            margin: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .tab img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-        }
-        .logout-btn {
-            background-color: #f44336;
-            margin-top: 20px;
-        }
-        .logout-btn:hover {
-            background-color: #d32f2f;
-        }
-        .error-message {
-            color: #f44336;
-            font-size: 14px;
-            margin-top: -8px;
-            margin-bottom: 10px;
-            text-align: left;
-        }
-        .success-message {
-            color: #4CAF50;
-            font-size: 14px;
-            margin-top: -8px;
-            margin-bottom: 10px;
-            text-align: left;
-        }
-        .password-container {
-            position: relative;
-        }
-        .password-toggle {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #666;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .header {
+        background-color: #00274d;
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+      .header h1,
+      .header h2 {
+        margin: 0;
+      }
+      .nav-tabs {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+      .nav-tabs li {
+        display: inline;
+      }
+      .nav-tabs a {
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        background-color: #004080;
+        border-radius: 5px;
+      }
+      .nav-tabs a:hover {
+        background-color: #003366;
+      }
+      .container {
+        text-align: center;
+        padding: 20px;
+      }
+      .image-container {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        overflow: hidden;
+      }
+      .image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+      .image:hover {
+        transform: scale(1.1);
+      }
+      .image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: white;
+      }
+      .image-container:hover .image-overlay {
+        opacity: 1;
+      }
+      .image-overlay h1 {
+        font-size: 32px;
+      }
+      .content {
+        background-color: white;
+        border-radius: 10px;
+        margin: 20px;
+        padding: 20px;
+        text-align: justify;
+      }
+      .contact-box {
+        background-color: #e6f7ff;
+        padding: 15px;
+        border-left: 5px solid #00274d;
+        margin-top: 20px;
+      }
+      footer {
+        background-color: #00274d;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        margin-top: 20px;
+      }
+      .login-register {
+        margin: 20px auto;
+        max-width: 400px;
+        padding: 20px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .login-register input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .login-register button {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .login-register button:hover {
+        background-color: #45a049;
+      }
+      .hidden {
+        display: none;
+      }
+      .tab {
+        overflow: hidden;
+        background-color: #004080;
+        display: flex;
+        justify-content: space-around;
+        padding: 10px;
+      }
+      .tab button {
+        background-color: inherit;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 10px;
+        transition: 0.3s;
+        font-size: 16px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+        text-align: center;
+      }
+      .tab button:hover {
+        background-color: #003366;
+      }
+      .tab button.active {
+        background-color: #4caf50;
+      }
+      .tabcontent {
+        display: none;
+        padding: 20px;
+        border-top: none;
+        background-color: #fff;
+        margin: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .tab img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+      }
+      .logout-btn {
+        background-color: #f44336;
+        margin-top: 20px;
+      }
+      .logout-btn:hover {
+        background-color: #d32f2f;
+      }
+      .error-message {
+        color: #f44336;
+        font-size: 14px;
+        margin-top: -8px;
+        margin-bottom: 10px;
+        text-align: left;
+      }
+      .success-message {
+        color: #4caf50;
+        font-size: 14px;
+        margin-top: -8px;
+        margin-bottom: 10px;
+        text-align: left;
+      }
+      .password-container {
+        position: relative;
+      }
+      .password-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #666;
+      }
+      /* Map styles */
+      #map {
+        height: 500px;
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin: 20px 0;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="header">
-        <h1>University of Wolverhampton</h1>
-        <h2>Undergraduate Open Day</h2>
-        <p>Saturday 15 March, 11:00 AM - 2:30 PM</p>
+      <h1>University of Wolverhampton</h1>
+      <h2>Undergraduate Open Day</h2>
+      <p>Saturday 15 March, 11:00 AM - 2:30 PM</p>
     </div>
     <ul class="nav-tabs">
-        <li><a href="#" onclick="showHome()">🏠Home</a></li>
-        <li><a href="#" onclick="showNews()">📰News</a></li>
-        <li><a href="#" onclick="showLocation()">📌Location</a></li>
-        <li><a href="#" onclick="showLoginForm()">🔑Login</a></li>
-        <li><a href="#" onclick="showRegistrationForm()">📝Register</a></li>
+      <li><a href="#" id="homeLink">🏠Home</a></li>
+      <li><a href="#" id="newsLink">📰News</a></li>
+      <li><a href="#" id="locationLink">📌Location</a></li>
+      <li><a href="#" id="loginLink">🔑Login</a></li>
+      <li><a href="#" id="registerLink">📝Register</a></li>
     </ul>
 
-    <!-- Home Section (index.html content) -->
+    <!-- Home Section -->
     <div id="homeSection" class="container">
-        <div class="image-container">
-            <img class="image" src="https://media-hosting.imagekit.io//fd53d110f4cf4648/1584969780uw3.jpg.webp?Expires=1836993719&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=BxZBH1oX-C2pGYpj3G7Cb25yuK4aO30qgVrFUUXe4R3DavbT8WnY9VOzrw9OOnFcpNSqwdVtBp3tqIdUbImuvvCFXEOx90Jtq3vNWzqwDoC3cNrQWgfB8K1xpu7RukgvebTAn0fQmglgORPOmIBxWnxqYrNJPHGMdukhDppTYKHzYzqBn7dU3diXb6xJRBC-2AEGqXEM~bO5b3JEmyeyeYUQwoUpUMls9JsL7PISWjTvtq-ksSOFxVSrLRxzyzUH9nbk5Y2uybjhnKu4G4E8KSNOL-jBdSoZLa~hV01ZMSj~7qaiacTYIDz31oeits8UYAJhHG1haUVtDKLqur8ZrA__" alt="University of Wolverhampton Open Day" />
-            <div class="image-overlay">
-                <h1>Join us for our on-campus undergraduate open day</h1>
-            </div>
+      <div class="image-container">
+        <img
+          class="image"
+          src="https://media-hosting.imagekit.io//fd53d110f4cf4648/1584969780uw3.jpg.webp?Expires=1836993719&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=BxZBH1oX-C2pGYpj3G7Cb25yuK4aO30qgVrFUUXe4R3DavbT8WnY9VOzrw9OOnFcpNSqwdVtBp3tqIdUbImuvvCFXEOx90Jtq3vNWzqwDoC3cNrQWgfB8K1xpu7RukgvebTAn0fQmglgORPOmIBxWnxqYrNJPHGMdukhDppTYKHzYzqBn7dU3diXb6xJRBC-2AEGqXEM~bO5b3JEmyeyeYUQwoUpUMls9JsL7PISWjTvtq-ksSOFxVSrLRxzyzUH9nbk5Y2uybjhnKu4G4E8KSNOL-jBdSoZLa~hV01ZMSj~7qaiacTYIDz31oeits8UYAJhHG1haUVtDKLqur8ZrA__"
+          alt="University of Wolverhampton Open Day"
+        />
+        <div class="image-overlay">
+          <h1>Join us for our on-campus undergraduate open day</h1>
         </div>
-        <div class="content">
-            <h3>Discover Your Future</h3>
-            <p>
-                We're ready to welcome you to our next University of Wolverhampton undergraduate open day - on campus, in person. It's the perfect way to help you decide if studying with us is your perfect fit.
-            </p>
-            <p>
-                Look around our facilities, tour our campuses, meet the lecturers, and see the student accommodation. You can also drop by the Students' Union and talk to our experts about money, undergraduate courses, careers, and more.
-            </p>
-            <h3>Find Your Campus and Programme</h3>
-            <p>
-                To find the correct campus for your subject, simply select your subject area of interest from the drop-down menu below. To make the best use of your time, head to the campus where your main subject will be taught first.
-            </p>
-            <p>
-                If you're still not sure where to go, give us a call! <strong>0800 953 3222</strong> or email: <a href="mailto:enquiries@wlv.ac.uk">enquiries@wlv.ac.uk</a>
-            </p>
-            <h3>Can't Attend?</h3>
-            <p>
-                If you can't attend our undergraduate open day, we offer virtual tours, where you can explore our campuses and facilities from the comfort of your own home. We also offer campus tours, which give you the chance to see our campuses in person on a different date.
-            </p>
-            <div class="contact-box">
-                <h3>Get in Touch</h3>
-                <p>
-                    Have a question about our undergraduate open days? We are happy to help. Simply get in touch with our team, who will assist with your query.
-                </p>
-                <p>
-                    📞 Call us: <strong>01902 322 222</strong> <br />
-                    📧 Email us: <a href="mailto:enquiries@wlv.ac.uk">enquiries@wlv.ac.uk</a>
-                </p>
-            </div>
+      </div>
+      <div class="content">
+        <h3>Discover Your Future</h3>
+        <p>
+          We're ready to welcome you to our next University of Wolverhampton
+          undergraduate open day - on campus, in person. It's the perfect way to
+          help you decide if studying with us is your perfect fit.
+        </p>
+        <p>
+          Look around our facilities, tour our campuses, meet the lecturers, and
+          see the student accommodation. You can also drop by the Students'
+          Union and talk to our experts about money, undergraduate courses,
+          careers, and more.
+        </p>
+        <h3>Find Your Campus and Programme</h3>
+        <p>
+          To find the correct campus for your subject, simply select your
+          subject area of interest from the drop-down menu below. To make the
+          best use of your time, head to the campus where your main subject will
+          be taught first.
+        </p>
+        <p>
+          If you're still not sure where to go, give us a call!
+          <strong>0800 953 3222</strong> or email:
+          <a href="mailto:enquiries@wlv.ac.uk">enquiries@wlv.ac.uk</a>
+        </p>
+        <h3>Can't Attend?</h3>
+        <p>
+          If you can't attend our undergraduate open day, we offer virtual
+          tours, where you can explore our campuses and facilities from the
+          comfort of your own home. We also offer campus tours, which give you
+          the chance to see our campuses in person on a different date.
+        </p>
+        <div class="contact-box">
+          <h3>Get in Touch</h3>
+          <p>
+            Have a question about our undergraduate open days? We are happy to
+            help. Simply get in touch with our team, who will assist with your
+            query.
+          </p>
+          <p>
+            📞 Call us: <strong>01902 322 222</strong> <br />
+            📧 Email us:
+            <a href="mailto:enquiries@wlv.ac.uk">enquiries@wlv.ac.uk</a>
+          </p>
         </div>
-    </div>
-    <!-- News Section -->
-    <div id="newsSection" class="container hidden">
-    <div class="news-container">
-        <div class="news-item">
-            <div class="date">October 10, 2023</div>
-                <h3>New Engineering Building Inauguration</h3>
-                <p>The University of Wolverhampton is proud to announce the inauguration of its state-of-the-art Engineering Building. Equipped with cutting-edge labs and research facilities, this building will foster innovation and excellence in engineering education.</p>
-            </div>
-            <div class="news-item">
-                <div class="date">October 5, 2023</div>
-                <h3>Scholarship Opportunities for 2024</h3>
-                <p>Applications are now open for the 2024 scholarship programs. Students can apply for merit-based and need-based scholarships to support their academic journey at the University of Wolverhampton.</p>
-            </div>
-            <div class="news-item">
-                <div class="date">September 28, 2023</div>
-                <h3>Open Day Success</h3>
-                <p>The recent Undergraduate Open Day was a huge success, with hundreds of prospective students and their families visiting our campuses. Thank you to everyone who participated!</p>
-            </div>
-            <div class="news-item">
-                <div class="date">September 20, 2023</div>
-                <h3>New Partnership with Local Industries</h3>
-                <p>The University of Wolverhampton has signed a new partnership agreement with leading local industries to provide students with internship opportunities and real-world experience.</p>
-            </div>
-        </div>
+      </div>
     </div>
 
-<!-- Location Section -->
-<div id="locationSection" class="container hidden">
-    <div class="location-container">
-            <div class="location-item">
-                <h3>City Campus (Wolverhampton)</h3>
-                <div class="address">Wulfruna Street, Wolverhampton, WV1 1LY</div>
-                <p>The City Campus is the main campus of the University of Wolverhampton, located in the heart of Wolverhampton. It houses the Faculty of Science and Engineering, Faculty of Arts, and Faculty of Social Sciences.</p>
-            </div>
-            <div class="location-item">
-                <h3>Walsall Campus</h3>
-                <div class="address">Gorway Road, Walsall, WS1 3BD</div>
-                <p>The Walsall Campus is home to the Faculty of Education, Health, and Wellbeing. It features state-of-the-art sports facilities, including a gym, swimming pool, and sports hall.</p>
-            </div>
-            <div class="location-item">
-                <h3>Telford Campus</h3>
-                <div class="address">Shifnal Road, Priorslee, Telford, TF2 9NT</div>
-                <p>The Telford Campus specializes in business, computing, and engineering courses. It offers modern facilities and a supportive learning environment.</p>
-            </div>
-            <div class="location-item">
-                <h3>University of Wolverhampton at Stafford</h3>
-                <div class="address">Blackheath Lane, Stafford, ST18 0YG</div>
-                <p>The Stafford campus offers courses in nursing, midwifery, and health-related disciplines. It is equipped with simulation suites and clinical skills labs.</p>
-            </div>
+    <!-- News Section -->
+    <div id="newsSection" class="container hidden">
+      <div class="news-container">
+        <div class="news-item">
+          <div class="date">October 10, 2023</div>
+          <h3>New Engineering Building Inauguration</h3>
+          <p>
+            The University of Wolverhampton is proud to announce the
+            inauguration of its state-of-the-art Engineering Building. Equipped
+            with cutting-edge labs and research facilities, this building will
+            foster innovation and excellence in engineering education.
+          </p>
         </div>
+        <div class="news-item">
+          <div class="date">October 5, 2023</div>
+          <h3>Scholarship Opportunities for 2024</h3>
+          <p>
+            Applications are now open for the 2024 scholarship programs.
+            Students can apply for merit-based and need-based scholarships to
+            support their academic journey at the University of Wolverhampton.
+          </p>
+        </div>
+        <div class="news-item">
+          <div class="date">September 28, 2023</div>
+          <h3>Open Day Success</h3>
+          <p>
+            The recent Undergraduate Open Day was a huge success, with hundreds
+            of prospective students and their families visiting our campuses.
+            Thank you to everyone who participated!
+          </p>
+        </div>
+        <div class="news-item">
+          <div class="date">September 20, 2023</div>
+          <h3>New Partnership with Local Industries</h3>
+          <p>
+            The University of Wolverhampton has signed a new partnership
+            agreement with leading local industries to provide students with
+            internship opportunities and real-world experience.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Location Section -->
+    <div id="locationSection" class="container hidden">
+      <div id="map"></div>
+      <div class="location-container">
+        <div class="location-item">
+          <h3>City Campus (Wolverhampton)</h3>
+          <div class="address">Wulfruna Street, Wolverhampton, WV1 1LY</div>
+          <p>
+            The City Campus is the main campus of the University of
+            Wolverhampton, located in the heart of Wolverhampton. It houses the
+            Faculty of Science and Engineering, Faculty of Arts, and Faculty of
+            Social Sciences.
+          </p>
+        </div>
+        <div class="location-item">
+          <h3>Walsall Campus</h3>
+          <div class="address">Gorway Road, Walsall, WS1 3BD</div>
+          <p>
+            The Walsall Campus is home to the Faculty of Education, Health, and
+            Wellbeing. It features state-of-the-art sports facilities, including
+            a gym, swimming pool, and sports hall.
+          </p>
+        </div>
+        <div class="location-item">
+          <h3>Telford Campus</h3>
+          <div class="address">Shifnal Road, Priorslee, Telford, TF2 9NT</div>
+          <p>
+            The Telford Campus specializes in business, computing, and
+            engineering courses. It offers modern facilities and a supportive
+            learning environment.
+          </p>
+        </div>
+        <div class="location-item">
+          <h3>University of Wolverhampton at Stafford</h3>
+          <div class="address">Blackheath Lane, Stafford, ST18 0YG</div>
+          <p>
+            The Stafford campus offers courses in nursing, midwifery, and
+            health-related disciplines. It is equipped with simulation suites
+            and clinical skills labs.
+          </p>
+        </div>
+      </div>
     </div>
 
     <!-- Login and Registration Forms -->
     <div class="login-register hidden" id="loginForm">
-        <h2>Login</h2>
-        <div id="loginErrorMessage" class="error-message hidden"></div>
-        <input type="text" id="loginUsername" placeholder="Email" required>
-        <div class="password-container">
-            <input type="password" id="loginPassword" placeholder="Password" required>
-            <span class="password-toggle" onclick="togglePassword('loginPassword', this)">👁️</span>
-        </div>
-        <button onclick="login()">Login</button>
-        <p>Don't have an account? <a href="#" onclick="showRegistrationForm()">Register here</a></p>
+      <h2>Login</h2>
+      <div id="loginErrorMessage" class="error-message hidden"></div>
+      <input type="text" id="loginUsername" placeholder="Email" required />
+      <div class="password-container">
+        <input
+          type="password"
+          id="loginPassword"
+          placeholder="Password"
+          required
+        />
+        <span
+          class="password-toggle"
+          onclick="togglePassword('loginPassword', this)"
+          >👁️</span
+        >
+      </div>
+      <button onclick="login()">Login</button>
+      <p>
+        Don't have an account?
+        <a href="#" onclick="showRegistrationForm()">Register here</a>
+      </p>
     </div>
 
     <div class="login-register hidden" id="registrationForm">
-        <h2>Register</h2>
-        <div id="regErrorMessage" class="error-message hidden"></div>
-        <div id="regSuccessMessage" class="success-message hidden"></div>
-        <input type="text" id="regName" placeholder="Full Name" required>
-        <input type="email" id="regEmail" placeholder="Email" required>
-        <div class="password-container">
-            <input type="password" id="regPassword" placeholder="Password (min 8 characters)" required>
-            <span class="password-toggle" onclick="togglePassword('regPassword', this)">👁️</span>
-        </div>
-        <div class="password-container">
-            <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
-            <span class="password-toggle" onclick="togglePassword('regConfirmPassword', this)">👁️</span>
-        </div>
-        <button onclick="register()">Register</button>
-        <p>Already have an account? <a href="#" onclick="showLoginForm()">Login here</a></p>
+      <h2>Register</h2>
+      <div id="regErrorMessage" class="error-message hidden"></div>
+      <div id="regSuccessMessage" class="success-message hidden"></div>
+      <input type="text" id="regName" placeholder="Full Name" required />
+      <input type="email" id="regEmail" placeholder="Email" required />
+      <div class="password-container">
+        <input
+          type="password"
+          id="regPassword"
+          placeholder="Password (min 8 characters)"
+          required
+        />
+        <span
+          class="password-toggle"
+          onclick="togglePassword('regPassword', this)"
+          >👁️</span
+        >
+      </div>
+      <div class="password-container">
+        <input
+          type="password"
+          id="regConfirmPassword"
+          placeholder="Confirm Password"
+          required
+        />
+        <span
+          class="password-toggle"
+          onclick="togglePassword('regConfirmPassword', this)"
+          >👁️</span
+        >
+      </div>
+      <button onclick="register()">Register</button>
+      <p>
+        Already have an account?
+        <a href="#" onclick="showLoginForm()">Login here</a>
+      </p>
     </div>
 
-    <!-- Open Day Content (inner folder.html content) -->
+    <!-- Open Day Content -->
     <div id="openDayContent" class="container hidden">
-        <h2>University Open Day</h2>
-        <p>Welcome to the University Open Day! <span id="attendeeCount">0</span> people are attending.</p>
-        <button class="logout-btn" onclick="logout()">Logout</button>
-        <div class="tab">
-            <button class="tablinks" onclick="openTab(event, 'ProgramSchedule')">
-                <img src="https://static.vecteezy.com/system/resources/previews/019/519/658/non_2x/schedule-icon-for-your-website-mobile-presentation-and-logo-design-free-vector.jpg" alt="Schedule Logo"> Program Schedule
-            </button>
-            <button class="tablinks" onclick="openTab(event, 'Parking')">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmjDPfP3ELX_DqtvxLYrcOC8TNmwiis_LlEw&s" alt="Parking Logo"> Parking
-            </button>
-            <button class="tablinks" onclick="openTab(event, 'UniversityBuilding')">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScLZ-Ik-K9zzCcbskiElCNGwDD6S_iBVH0Ng&s" alt="Building Logo"> University Building
-            </button>
-            <button class="tablinks" onclick="openTab(event, 'StudentUnion')">
-                <img src="https://static.vecteezy.com/system/resources/previews/010/553/480/non_2x/handshake-logo-isolated-on-letter-u-alphabet-business-partnership-and-union-logo-design-vector.jpg" alt="Union Logo"> Student Union
-            </button>
-            <button class="tablinks" onclick="openTab(event, 'Sports')">
-                <img src="https://marketplace.canva.com/EAFw4PjPOl4/1/0/1600w/canva-blue-and-red-modern-illustrative-champion-trophy-logo-UxtLFNmaXOk.jpg" alt="Sports Logo"> Sports
-            </button>
-        </div>
+      <h2>University Open Day</h2>
+      <p>
+        Welcome to the University Open Day!
+        <span id="attendeeCount">0</span> people are attending.
+      </p>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+      <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'ProgramSchedule')">
+          <img
+            src="https://static.vecteezy.com/system/resources/previews/019/519/658/non_2x/schedule-icon-for-your-website-mobile-presentation-and-logo-design-free-vector.jpg"
+            alt="Schedule Logo"
+          />
+          Program Schedule
+        </button>
+        <button class="tablinks" onclick="openTab(event, 'Parking')">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmjDPfP3ELX_DqtvxLYrcOC8TNmwiis_LlEw&s"
+            alt="Parking Dancer Logo"
+          />
+          Parking
+        </button>
+        <button class="tablinks" onclick="openTab(event, 'UniversityBuilding')">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScLZ-Ik-K9zzCcbskiElCNGwDD6S_iBVH0Ng&s"
+            alt="Building Logo"
+          />
+          University Building
+        </button>
+        <button class="tablinks" onclick="openTab(event, 'StudentUnion')">
+          <img
+            src="https://static.vecteezy.com/system/resources/previews/010/553/480/non_2x/handshake-logo-isolated-on-letter-u-alphabet-business-partnership-and-union-logo-design-vector.jpg"
+            alt="Union Logo"
+          />
+          Student Union
+        </button>
+        <button class="tablinks" onclick="openTab(event, 'Sports')">
+          <img
+            src="https://marketplace.canva.com/EAFw4PjPOl4/1/0/1600w/canva-blue-and-red-modern-illustrative-champion-trophy-logo-UxtLFNmaXOk.jpg"
+            alt="Sports Logo"
+          />
+          Sports
+        </button>
+      </div>
 
-        <div id="ProgramSchedule" class="tabcontent">
-            <h2>Program Schedule</h2>
-            <p>Welcome to the University Open Day! Below is the schedule for the day:</p>
-            <ul>
-                <li>9:00 AM - Registration</li>
-                <li>10:00 AM - Welcome Speech by the Vice-Chancellor</li>
-                <li>11:00 AM - Campus Tour</li>
-                <li>12:30 PM - Lunch Break</li>
-                <li>2:00 PM - Faculty Presentations</li>
-                <li>4:00 PM - Q&A Session</li>
-                <li>5:00 PM - Closing Remarks</li>
-            </ul>
-        </div>
+      <div id="ProgramSchedule" class="tabcontent">
+        <h2>Program Schedule</h2>
+        <p>
+          Welcome to the University Open Day! Below is the schedule for the day:
+        </p>
+        <ul>
+          <li>9:00 AM - Registration</li>
+          <li>10:00 AM - Welcome Speech by the Vice-Chancellor</li>
+          <li>11:00 AM - Campus Tour</li>
+          <li>12:30 PM - Lunch Break</li>
+          <li>2:00 PM - Faculty Presentations</li>
+          <li>4:00 PM - Q&A Session</li>
+          <li>5:00 PM - Closing Remarks</li>
+        </ul>
+      </div>
 
-        <div id="Parking" class="tabcontent">
-            <h2>Parking Information</h2>
-            <p>Parking is available in the following areas:</p>
-            <ul>
-                <li>Main Parking Lot - Located near the main entrance.</li>
-                <li> General parking spaces are indicated on the Wolverhampton street map.</li>
-                <li>parking opposite the Lord Swraj Paul Building (MU) .</li>
-            </ul>
-            <p>Please follow the signs and instructions from the parking attendants.</p>
-        </div>
+      <div id="Parking" class="tabcontent">
+        <h2>Parking Information</h2>
+        <p>Parking is available in the following areas:</p>
+        <ul>
+          <li>Main Parking Lot - Located near the main entrance.</li>
+          <li>
+            General parking spaces are indicated on the Wolverhampton street
+            map.
+          </li>
+          <li>Parking opposite the Lord Swraj Paul Building (MU).</li>
+        </ul>
+        <p>
+          Please follow the signs and instructions from the parking attendants.
+        </p>
+      </div>
 
-        <div id="UniversityBuilding" class="tabcontent">
-            <h2>University Building</h2>
-            <p>Our university campus is home to several state-of-the-art buildings, including:</p>
-            <ul>
-                <li>ML Building - Faiths facilities are located at ML Building, along with research facilities for Health and Wellbeing, and several administrative departments..</li>
-                <li>MX: The Housman Building - The University's central administration hub, MX Building is a base for several administrative departments. It also houses a 190 seat lecture theatre, plus several teaching rooms, and is the main teaching area for City Campus North.
-                </li>
-                <li>MH: Mary Seacole Building - The purpose-built Mary Seacole Building includes newly developed skills centres, simulated hospital wards, large IT suites and modern social learning spaces.
-                </li>
-                <li>MC: Millennium City Building
-                    -One of the main social spaces on campus, Millennium City Building (MC) includes our main dining areas, and Starbucks branch..</li>
-            </ul>
-        </div>
+      <div id="UniversityBuilding" class="tabcontent">
+        <h2>University Building</h2>
+        <p>
+          Our university campus is home to several state-of-the-art buildings,
+          including:
+        </p>
+        <ul>
+          <li>
+            ML Building - Faiths facilities are located at ML Building, along
+            with research facilities for Health and Wellbeing, and several
+            administrative departments.
+          </li>
+          <li>
+            MX: The Housman Building - The University's central administration
+            hub, MX Building is a base for several administrative departments.
+            It also houses a 190 seat lecture theatre, plus several teaching
+            rooms, and is the main teaching area for City Campus North.
+          </li>
+          <li>
+            MH: Mary Seacole Building - The purpose-built Mary Seacole Building
+            includes newly developed skills centres, simulated hospital wards,
+            large IT suites and modern social learning spaces.
+          </li>
+          <li>
+            MC: Millennium City Building - One of the main social spaces on
+            campus, Millennium City Building (MC) includes our main dining
+            areas, and Starbucks branch.
+          </li>
+        </ul>
+      </div>
 
-        <div id="StudentUnion" class="tabcontent">
-            <h2>Student Union</h2>
-            <p>The Student Union is the heart of campus life, offering a variety of services and activities:</p>
-            <ul>
-                <li>Cafeteria - A place to grab a bite and socialize.</li>
-                <li>Clubs and Societies - Join one of our many student organizations.</li>
-                <li>Student Services - Support for academic and personal needs.</li>
-                <li>Events - Regular events, including concerts, workshops, and more.</li>
-            </ul>
-        </div>
+      <div id="StudentUnion" class="tabcontent">
+        <h2>Student Union</h2>
+        <p>
+          The Student Union is the heart of campus life, offering a variety of
+          services and activities:
+        </p>
+        <ul>
+          <li>Cafeteria - A place to grab a bite and socialize.</li>
+          <li>
+            Clubs and Societies - Join one of our many student organizations.
+          </li>
+          <li>Student Services - Support for academic and personal needs.</li>
+          <li>
+            Events - Regular events, including concerts, workshops, and more.
+          </li>
+        </ul>
+      </div>
 
-        <div id="Sports" class="tabcontent">
-            <h2>Sports Facilities</h2>
-            <p>Our sports facilities are among the best in the region, including:</p>
-            <ul>
-                <li>Gym Training</li>
-                <li>Footsall Fields</li>
-                <li>Indoor Sports Hall - For basketball, volleyball, and badminton.</li>
-                <li>Fitness Center - Fully equipped gym with personal trainers available.</li>
-            </ul>
-        </div>
+      <div id="Sports" class="tabcontent">
+        <h2>Sports Facilities</h2>
+        <p>
+          Our sports facilities are among the best in the region, including:
+        </p>
+        <ul>
+          <li>Gym Training</li>
+          <li>Footsall Fields</li>
+          <li>
+            Indoor Sports Hall - For basketball, volleyball, and badminton.
+          </li>
+          <li>
+            Fitness Center - Fully equipped gym with personal trainers
+            available.
+          </li>
+        </ul>
+      </div>
     </div>
 
     <footer>
-        <p>
-            © 2025 University of Wolverhampton Wulfruna Street, Wolverhampton WV1 1LY
-        </p>
-        <p>
-            <a href="#">Privacy Policy</a> 
-            <a href="#">Legal Information</a> 
-            <a href="#">Cookie Policy</a> 
-            <a href="#">Accessibility Statement</a>
-        </p>
+      <p>
+        © 2025 University of Wolverhampton Wulfruna Street, Wolverhampton WV1
+        1LY
+      </p>
+      <p>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Legal Information</a>
+        <a href="#">Cookie Policy</a>
+        <a href="#">Accessibility Statement</a>
+      </p>
     </footer>
 
+    <!-- Add Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Simulated database of users
-        const users = JSON.parse(localStorage.getItem('openDayUsers')) || [];
-        let currentUser = null;
-        let attendees = 0;
+      // Simulated database of users
+      const users = JSON.parse(localStorage.getItem("openDayUsers")) || [];
+      let currentUser = null;
+      let attendees = 0;
+      let map = null;
 
-        function showHome() {
-            document.getElementById('homeSection').classList.remove('hidden');
-            document.getElementById('newsSection').classList.add('hidden');
-            document.getElementById('locationSection').classList.add('hidden');
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registrationForm').classList.add('hidden');
-            document.getElementById('openDayContent').classList.add('hidden');
-            clearMessages();
+      function showHome() {
+        document.getElementById("homeSection").classList.remove("hidden");
+        document.getElementById("newsSection").classList.add("hidden");
+        document.getElementById("locationSection").classList.add("hidden");
+        document.getElementById("loginForm").classList.add("hidden");
+        document.getElementById("registrationForm").classList.add("hidden");
+        document.getElementById("openDayContent").classList.add("hidden");
+        clearMessages();
+      }
+
+      function showNews() {
+        document.getElementById("newsSection").classList.remove("hidden");
+        document.getElementById("homeSection").classList.add("hidden");
+        document.getElementById("locationSection").classList.add("hidden");
+        document.getElementById("loginForm").classList.add("hidden");
+        document.getElementById("registrationForm").classList.add("hidden");
+        document.getElementById("openDayContent").classList.add("hidden");
+        clearMessages();
+      }
+
+      function showLocation() {
+        document.getElementById("locationSection").classList.remove("hidden");
+        document.getElementById("homeSection").classList.add("hidden");
+        document.getElementById("newsSection").classList.add("hidden");
+        document.getElementById("loginForm").classList.add("hidden");
+        document.getElementById("registrationForm").classList.add("hidden");
+        document.getElementById("openDayContent").classList.add("hidden");
+        clearMessages();
+        initializeMap();
+      }
+
+      function showLoginForm() {
+        document.getElementById("homeSection").classList.add("hidden");
+        document.getElementById("newsSection").classList.add("hidden");
+        document.getElementById("locationSection").classList.add("hidden");
+        document.getElementById("loginForm").classList.remove("hidden");
+        document.getElementById("registrationForm").classList.add("hidden");
+        document.getElementById("openDayContent").classList.add("hidden");
+        clearMessages();
+      }
+
+      function showRegistrationForm() {
+        document.getElementById("homeSection").classList.add("hidden");
+        document.getElementById("newsSection").classList.add("hidden");
+        document.getElementById("locationSection").classList.add("hidden");
+        document.getElementById("loginForm").classList.add("hidden");
+        document.getElementById("registrationForm").classList.remove("hidden");
+        document.getElementById("openDayContent").classList.add("hidden");
+        clearMessages();
+      }
+
+      function clearMessages() {
+        document.getElementById("loginErrorMessage").classList.add("hidden");
+        document.getElementById("regErrorMessage").classList.add("hidden");
+        document.getElementById("regSuccessMessage").classList.add("hidden");
+      }
+
+      function showError(elementId, message) {
+        const element = document.getElementById(elementId);
+        element.textContent = message;
+        element.classList.remove("hidden");
+      }
+
+      function showSuccess(elementId, message) {
+        const element = document.getElementById(elementId);
+        element.textContent = message;
+        element.classList.remove("hidden");
+      }
+
+      function togglePassword(inputId, toggleElement) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+          input.type = "text";
+          toggleElement.textContent = "👁️";
+        } else {
+          input.type = "password";
+          toggleElement.textContent = "👁️";
+        }
+      }
+
+      function isValidEmail(email) {
+        const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return re.test(String(email).toLowerCase());
+      }
+
+      function isValidPassword(password) {
+        return password.length >= 8;
+      }
+
+      function login() {
+        const email = document.getElementById("loginUsername").value.trim();
+        const password = document.getElementById("loginPassword").value;
+
+        if (!email || !password) {
+          showError(
+            "loginErrorMessage",
+            "Please enter both email and password."
+          );
+          return;
         }
 
-        function showNews() {
-            document.getElementById('newsSection').classList.remove('hidden');
-            document.getElementById('homeSection').classList.add('hidden');
-            document.getElementById('locationSection').classList.add('hidden');
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registrationForm').classList.add('hidden');
-            document.getElementById('openDayContent').classList.add('hidden');
-            clearMessages();
+        if (!isValidEmail(email)) {
+          showError("loginErrorMessage", "Please enter a valid email address.");
+          return;
         }
 
-        function showLocation() {
-            document.getElementById('locationSection').classList.remove('hidden');
-            document.getElementById('homeSection').classList.add('hidden');
-            document.getElementById('newsSection').classList.add('hidden');
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registrationForm').classList.add('hidden');
-            document.getElementById('openDayContent').classList.add('hidden');
-            clearMessages();
+        const user = users.find(
+          (u) => u.email === email && u.password === password
+        );
+
+        if (user) {
+          currentUser = user;
+          document.getElementById("homeSection").classList.add("hidden");
+          document.getElementById("loginForm").classList.add("hidden");
+          document.getElementById("openDayContent").classList.remove("hidden");
+          attendees++;
+          document.getElementById("attendeeCount").textContent = attendees;
+        } else {
+          showError(
+            "loginErrorMessage",
+            "Invalid email or password. Please try again."
+          );
+        }
+      }
+
+      function register() {
+        const name = document.getElementById("regName").value.trim();
+        const email = document.getElementById("regEmail").value.trim();
+        const password = document.getElementById("regPassword").value;
+        const confirmPassword =
+          document.getElementById("regConfirmPassword").value;
+
+        if (!name || !email || !password || !confirmPassword) {
+          showError("regErrorMessage", "Please fill out all fields.");
+          return;
         }
 
-        function showLoginForm() {
-            document.getElementById('homeSection').classList.add('hidden');
-            document.getElementById('newsSection').classList.add('hidden');
-            document.getElementById('locationSection').classList.add('hidden');
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('registrationForm').classList.add('hidden');
-            document.getElementById('openDayContent').classList.add('hidden');
-            clearMessages();
+        if (!isValidEmail(email)) {
+          showError("regErrorMessage", "Please enter a valid email address.");
+          return;
         }
 
-        function showRegistrationForm() {
-            document.getElementById('homeSection').classList.add('hidden');
-            document.getElementById('newsSection').classList.add('hidden');
-            document.getElementById('locationSection').classList.add('hidden');
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registrationForm').classList.remove('hidden');
-            document.getElementById('openDayContent').classList.add('hidden');
-            clearMessages();
+        if (!isValidPassword(password)) {
+          showError(
+            "regErrorMessage",
+            "Password must be at least 8 characters long."
+          );
+          return;
         }
 
-        function clearMessages() {
-            document.getElementById('loginErrorMessage').classList.add('hidden');
-            document.getElementById('regErrorMessage').classList.add('hidden');
-            document.getElementById('regSuccessMessage').classList.add('hidden');
+        if (password !== confirmPassword) {
+          showError("regErrorMessage", "Passwords do not match.");
+          return;
         }
 
-        function showError(elementId, message) {
-            const element = document.getElementById(elementId);
-            element.textContent = message;
-            element.classList.remove('hidden');
+        const userExists = users.some((u) => u.email === email);
+        if (userExists) {
+          showError(
+            "regErrorMessage",
+            "An account with this email already exists."
+          );
+          return;
         }
 
-        function showSuccess(elementId, message) {
-            const element = document.getElementById(elementId);
-            element.textContent = message;
-            element.classList.remove('hidden');
+        const newUser = {
+          name,
+          email,
+          password,
+        };
+
+        users.push(newUser);
+        localStorage.setItem("openDayUsers", JSON.stringify(users));
+
+        showSuccess(
+          "regSuccessMessage",
+          "Registration successful! You can now login."
+        );
+        document.getElementById("regName").value = "";
+        document.getElementById("regEmail").value = "";
+        document.getElementById("regPassword").value = "";
+        document.getElementById("regConfirmPassword").value = "";
+
+        setTimeout(() => {
+          showLoginForm();
+          document.getElementById("loginUsername").value = email;
+        }, 2000);
+      }
+
+      function logout() {
+        currentUser = null;
+        showHome();
+      }
+
+      function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
         }
-
-        function togglePassword(inputId, toggleElement) {
-            const input = document.getElementById(inputId);
-            if (input.type === 'password') {
-                input.type = 'text';
-                toggleElement.textContent = '👁️';
-            } else {
-                input.type = 'password';
-                toggleElement.textContent = '👁️';
-            }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
         }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+      }
 
-        function isValidEmail(email) {
-            const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            return re.test(String(email).toLowerCase());
+      function initializeMap() {
+        if (map) {
+          map.remove();
         }
+        map = L.map("map").setView([52.5871, -2.1276], 10);
 
-        function isValidPassword(password) {
-            return password.length >= 8;
-        }
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution:
+            '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
 
-        function login() {
-            const email = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            
-            // Validation
-            if (!email || !password) {
-                showError('loginErrorMessage', 'Please enter both email and password.');
-                return;
-            }
-            
-            if (!isValidEmail(email)) {
-                showError('loginErrorMessage', 'Please enter a valid email address.');
-                return;
-            }
+        const campuses = [
+          {
+            name: "City Campus (Wolverhampton)",
+            address: "Wulfruna Street, Wolverhampton, WV1 1LY",
+            coords: [52.58806580850264, -2.127654764004979],
+          },
+          {
+            name: "Walsall Campus",
+            address: "Gorway Road, Walsall, WS1 3BD",
+            coords: [52.571484468703005, -1.968920802638397],
+          },
+          {
+            name: "Telford Campus",
+            address: "Shifnal Road, Priorslee, Telford, TF2 9NT",
+            coords: [52.68316695993731, -2.4254071737965526],
+          },
+          {
+            name: "University of Wolverhampton at Stafford",
+            address: "Blackheath Lane, Stafford, ST18 0YG",
+            coords: [52.805759854778906, -2.115424761358334],
+          },
+        ];
 
-            // Check if user exists
-            const user = users.find(u => u.email === email && u.password === password);
-            
-            if (user) {
-                currentUser = user;
-                document.getElementById('homeSection').classList.add('hidden');
-                document.getElementById('loginForm').classList.add('hidden');
-                document.getElementById('openDayContent').classList.remove('hidden');
-                attendees++;
-                document.getElementById('attendeeCount').textContent = attendees;
-            } else {
-                showError('loginErrorMessage', 'Invalid email or password. Please try again.');
-            }
-        }
-
-        function register() {
-            const name = document.getElementById('regName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value;
-            const confirmPassword = document.getElementById('regConfirmPassword').value;
-            
-            // Validation
-            if (!name || !email || !password || !confirmPassword) {
-                showError('regErrorMessage', 'Please fill out all fields.');
-                return;
-            }
-            
-            if (!isValidEmail(email)) {
-                showError('regErrorMessage', 'Please enter a valid email address.');
-                return;
-            }
-            
-            if (!isValidPassword(password)) {
-                showError('regErrorMessage', 'Password must be at least 8 characters long.');
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                showError('regErrorMessage', 'Passwords do not match.');
-                return;
-            }
-            
-            // Check if user already exists
-            const userExists = users.some(u => u.email === email);
-            if (userExists) {
-                showError('regErrorMessage', 'An account with this email already exists.');
-                return;
-            }
-            
-            // Create new user
-            const newUser = {
-                name,
-                email,
-                password
-            };
-            
-            users.push(newUser);
-            localStorage.setItem('openDayUsers', JSON.stringify(users));
-            
-            showSuccess('regSuccessMessage', 'Registration successful! You can now login.');
-            document.getElementById('regName').value = '';
-            document.getElementById('regEmail').value = '';
-            document.getElementById('regPassword').value = '';
-            document.getElementById('regConfirmPassword').value = '';
-            
-            // Auto switch to login after 2 seconds
-            setTimeout(() => {
-                showLoginForm();
-                document.getElementById('loginUsername').value = email;
-            }, 2000);
-        }
-
-        function logout() {
-            currentUser = null;
-            showHome();
-        }
-
-        function openTab(evt, tabName) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
-        }
-
-        // Open the default tab on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementsByClassName("tablinks")[0].click();
-            showHome(); // Show home section by default
+        campuses.forEach((campus) => {
+          L.marker(campus.coords)
+            .addTo(map)
+            .bindPopup(`<b>${campus.name}</b><br>${campus.address}`);
         });
+
+        const group = new L.featureGroup(
+          campuses.map((campus) => L.marker(campus.coords))
+        );
+        map.fitBounds(group.getBounds().pad(0.5));
+      }
+
+      // Initialize navigation event listeners
+      document.addEventListener("DOMContentLoaded", function () {
+        // Bind navigation events
+        document.getElementById("homeLink").addEventListener("click", (e) => {
+          e.preventDefault();
+          showHome();
+        });
+        document.getElementById("newsLink").addEventListener("click", (e) => {
+          e.preventDefault();
+          showNews();
+        });
+        document
+          .getElementById("locationLink")
+          .addEventListener("click", (e) => {
+            e.preventDefault();
+            if (typeof showLocation === "function") {
+              showLocation();
+            } else {
+              console.error("showLocation function is not defined");
+            }
+          });
+        document.getElementById("loginLink").addEventListener("click", (e) => {
+          e.preventDefault();
+          showLoginForm();
+        });
+        document
+          .getElementById("registerLink")
+          .addEventListener("click", (e) => {
+            e.preventDefault();
+            showRegistrationForm();
+          });
+
+        // Open default tab
+        document.getElementsByClassName("tablinks")[0].click();
+        showHome();
+      });
     </script>
-</body>
+  </body>
 </html>
